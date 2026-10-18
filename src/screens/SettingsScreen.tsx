@@ -46,6 +46,8 @@ export default function SettingsScreen({ lang, refresh }: ScreenProps) {
       <View style={[styles.card, { marginTop: 16 }]}>
         <Text style={styles.cardTitle}>{t('appName')}</Text>
         <Text style={styles.mutedText}>v1.0.0 • {t('tagline')}</Text>
+        <Text style={[styles.mutedText, { marginTop: 8, fontWeight: '600' }]}>🏢 TAKTIK MARKETING AGENCY LLC (KODE)</Text>
+        <Text style={styles.mutedText}>📞 +509 34312727</Text>
       </View>
     </ScrollView>
   );

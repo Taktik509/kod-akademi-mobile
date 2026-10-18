@@ -49,6 +49,7 @@ export default function HomeScreen({ navigate, lang, progress }: ScreenProps) {
         <View>
           <Text style={styles.title}>{t('appName')}</Text>
           <Text style={styles.subtitle}>{t('tagline')}</Text>
+          <Text style={[styles.subtitle, { fontSize: 11, opacity: 0.7 }]}>TAKTIK MARKETING AGENCY LLC (KODE)</Text>
         </View>
         <View style={styles.xpBadge}>
           <Text style={styles.xpText}>⚡ {progress.xp} {t('xp')}</Text>
