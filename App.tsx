@@ -23,13 +23,18 @@ import HomeScreen from './src/screens/HomeScreen';
 import LessonScreen from './src/screens/LessonScreen';
 import ExercisesScreen from './src/screens/ExercisesScreen';
 import LanguagesScreen from './src/screens/LanguagesScreen';
+import ModuleScreen from './src/screens/ModuleScreen';
+import GuideScreen from './src/screens/GuideScreen';
+import ResourcesScreen from './src/screens/ResourcesScreen';
 import UpdatesScreen from './src/screens/UpdatesScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import type { AppLang } from './src/data';
 
 const TABS: { route: Route; labelKey: string; icon: string }[] = [
-  { route: { name: 'home' }, labelKey: 'tabLessons', icon: '📚' },
+  { route: { name: 'program' }, labelKey: 'tabProgram', icon: '🗺️' },
+  { route: { name: 'home' }, labelKey: 'tabRapid', icon: '⚡' },
   { route: { name: 'languages' }, labelKey: 'tabLanguages', icon: '💻' },
+  { route: { name: 'resources' }, labelKey: 'tabResources', icon: '🔗' },
   { route: { name: 'updates' }, labelKey: 'tabNews', icon: '📰' },
   { route: { name: 'settings' }, labelKey: 'tabSettings', icon: '⚙️' },
 ];
@@ -93,6 +98,17 @@ export default function App() {
         {current.name === 'lesson' && <LessonScreen {...screenProps} route={current} />}
         {current.name === 'exercises' && <ExercisesScreen {...screenProps} route={current} />}
         {current.name === 'languages' && <LanguagesScreen {...screenProps} />}
+        {(current.name === 'module' ||
+          current.name === 'moduleLevel' ||
+          current.name === 'moduleLesson' ||
+          current.name === 'moduleExercises') && <ModuleScreen {...screenProps} route={current} />}
+        {(current.name === 'program' ||
+          current.name === 'etape' ||
+          current.name === 'guideModule' ||
+          current.name === 'guideLesson' ||
+          current.name === 'guideExercises' ||
+          current.name === 'guideProject') && <GuideScreen {...screenProps} route={current} />}
+        {current.name === 'resources' && <ResourcesScreen {...screenProps} />}
         {current.name === 'updates' && <UpdatesScreen {...screenProps} />}
         {current.name === 'settings' && <SettingsScreen {...screenProps} />}
 

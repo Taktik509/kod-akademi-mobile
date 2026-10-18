@@ -27,6 +27,7 @@ export interface Lesson {
   expert_note_fr?: string;
   expert_note_en?: string;
   expert_note_es?: string;
+  checkpoints?: Checkpoint[];
 }
 
 export type ExerciseType = 'lib' | 'qcm' | 'konplete' | 'jwenn-erè';
@@ -41,6 +42,71 @@ export interface Exercise {
   accepted: string[];
   correct_ht: string;
   explanation_ht: string;
+}
+
+/**
+ * Checkpoint — ti egzèsis an tan reyèl apre chak konsèp kle nan yon leson.
+ * Règ 3 itilizatè a: kesyon rapid qcm oswa vre/fo, koreksyon enstantane
+ * ak sistèm 3-tantativ la. Nan tèks leson an: makè [[CHECK:<id>]].
+ */
+export type CheckpointType = 'qcm' | 'vrai-faux' | 'code';
+
+export interface Checkpoint {
+  id: string;
+  type: CheckpointType;
+  prompt_ht: string;
+  choices?: string[];
+  code?: string;
+  accepted: string[];
+  correct_ht: string;
+  explanation_ht: string;
+}
+
+/** Retire makè [[CHECK:...]] nan yon tèks (pou vwa a pa li yo). */
+export function stripCheckMarkers(s: string): string {
+  return s.replace(/\s*\[\[CHECK:[^\]]+\]\]/g, '');
+}
+
+export type BodyBlock =
+  | { kind: 'text'; text: string }
+  | { kind: 'check'; id: string };
+
+/** Koupe kò leson an an blòk tèks + checkpoint dapre makè [[CHECK:id]]. */
+export function splitBodyWithChecks(body: string): BodyBlock[] {
+  const blocks: BodyBlock[] = [];
+  const re = /\[\[CHECK:([^\]]+)\]\]/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(body)) !== null) {
+    const text = body.slice(last, m.index).trim();
+    if (text.length > 0) blocks.push({ kind: 'text', text });
+    blocks.push({ kind: 'check', id: m[1] });
+    last = m.index + m[0].length;
+  }
+  const tail = body.slice(last).trim();
+  if (tail.length > 0) blocks.push({ kind: 'text', text: tail });
+  if (blocks.length === 0 && body.trim().length > 0) {
+    blocks.push({ kind: 'text', text: body.trim() });
+  }
+  return blocks;
+}
+
+/**
+ * Konvèti yon checkpoint an `Exercise` pou grading.ts (3 tantativ) travay san chanjman.
+ * 'vrai-faux' → 'qcm' (2 chwa A/B); 'code' → 'lib' (repons lib).
+ */
+export function checkpointToExercise(cp: Checkpoint): Exercise {
+  return {
+    id: cp.id,
+    lessonId: '',
+    type: cp.type === 'qcm' || cp.type === 'vrai-faux' ? 'qcm' : 'lib',
+    prompt_ht: cp.prompt_ht,
+    choices: cp.choices,
+    code: cp.code,
+    accepted: cp.accepted,
+    correct_ht: cp.correct_ht,
+    explanation_ht: cp.explanation_ht,
+  };
 }
 
 export interface LanguageItem {

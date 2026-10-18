@@ -9,10 +9,12 @@ import {
   lessonById,
   lessonExpertNote,
   lessonTitle,
+  stripCheckMarkers,
 } from '../data';
 import { t } from '../i18n';
-import { markLessonDone } from '../storage';
+import { markCheckpointDone, markLessonDone } from '../storage';
 import { speakLesson, stopSpeaking } from '../speech';
+import LessonBody from '../components/LessonBody';
 import type { ScreenProps } from '../types';
 
 export default function LessonScreen({
@@ -43,16 +45,16 @@ export default function LessonScreen({
 
   const done = progress.doneLessons.includes(lesson.id);
   const exerciseCount = exercisesForLesson(lesson.id).length;
-  const paragraphs = lessonBody(lesson, lang).split('\n\n');
 
   const toggleSpeak = () => {
     if (speaking) {
       stopSpeaking();
       setSpeaking(false);
     } else {
+      // Règ 1: vwa a li TOUT leson an, san makè [[CHECK]]
       speakLesson(
         lessonTitle(lesson, lang),
-        lessonBody(lesson, lang),
+        stripCheckMarkers(lessonBody(lesson, lang)),
         lessonExpertNote(lesson, lang),
         lang,
       );
@@ -62,6 +64,11 @@ export default function LessonScreen({
 
   const handleMarkDone = async () => {
     await markLessonDone(lesson.id);
+    await refresh();
+  };
+
+  const handleCheckpointDone = async (checkpointId: string) => {
+    await markCheckpointDone(checkpointId);
     await refresh();
   };
 
@@ -77,11 +84,14 @@ export default function LessonScreen({
       <View style={{ height: 8 }} />
       <Text style={styles.title}>{lessonTitle(lesson, lang)}</Text>
 
-      {paragraphs.map((p, i) => (
-        <Text key={i} style={[styles.cardText, { marginBottom: 10 }]}>
-          {p}
-        </Text>
-      ))}
+      {/* Règ 3: kò a ak ti egzèsis an tan reyèl apre chak konsèp kle */}
+      <LessonBody
+        body={lessonBody(lesson, lang)}
+        checkpoints={lesson.checkpoints}
+        lang={lang}
+        doneCheckpointIds={progress.doneCheckpoints}
+        onCheckpointDone={handleCheckpointDone}
+      />
 
       <Text style={[styles.cardTitle, { marginTop: 8 }]}>{t('codeExample')}</Text>
       <View style={styles.codeBlock}>

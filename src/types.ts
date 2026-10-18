@@ -9,7 +9,18 @@ export type Route =
   | { name: 'exercises'; lessonId: string }
   | { name: 'languages' }
   | { name: 'updates' }
-  | { name: 'settings' };
+  | { name: 'settings' }
+  | { name: 'module'; moduleId: string }
+  | { name: 'moduleLevel'; moduleId: string; levelId: string }
+  | { name: 'moduleLesson'; moduleId: string; levelId: string; lessonId: string }
+  | { name: 'moduleExercises'; moduleId: string; levelId: string; lessonId: string }
+  | { name: 'program' }
+  | { name: 'etape'; etapeId: string }
+  | { name: 'guideModule'; etapeId: string; moduleId: string }
+  | { name: 'guideLesson'; etapeId: string; moduleId: string; lessonId: string }
+  | { name: 'guideExercises'; etapeId: string; moduleId: string; lessonId: string }
+  | { name: 'guideProject'; etapeId: string; moduleId: string; projectId: string }
+  | { name: 'resources' };
 
 export type Navigate = (route: Route) => void;
 
